@@ -9,8 +9,10 @@ namespace Library_Management.Controllers
     {
 
         [HttpPost]
-        public IActionResult Create(Book book)
+        [ProducesResponseType(typeof(Book), StatusCodes.Status201Created)]
+        public IActionResult Create([FromBody] Book book)
         {
+
             return Created(string.Empty, book);
         }
 

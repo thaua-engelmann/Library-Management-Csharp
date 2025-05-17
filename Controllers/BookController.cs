@@ -1,4 +1,6 @@
-﻿using Library_Management.Models;
+﻿using Library_Management.Communication.Requests;
+using Library_Management.Communication.Responses;
+using Library_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management.Controllers
@@ -9,11 +11,18 @@ namespace Library_Management.Controllers
     {
 
         [HttpPost]
-        [ProducesResponseType(typeof(Book), StatusCodes.Status201Created)]
-        public IActionResult Create([FromBody] Book book)
+        [ProducesResponseType(typeof(CreatedBookResponseJson), StatusCodes.Status201Created)]
+        public IActionResult Create([FromBody] CreateBookRequestJson request)
         {
 
-            return Created(string.Empty, book);
+            var response = new CreatedBookResponseJson
+            {
+                Name = request.Name,
+                Author = request.Author,
+                Gender = request.Gender,
+            };
+
+            return Created(string.Empty, response);
         }
 
     }

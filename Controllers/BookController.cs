@@ -36,7 +36,7 @@ namespace Library_Management.Controllers
 
         private bool TryParseGender(string gender, out BookGender parsedGender)
         {
-            return Enum.TryParse<BookGender>(gender, out parsedGender);
+            return Enum.TryParse<BookGender>(gender, ignoreCase: true, out parsedGender);
         }
     }
 

@@ -15,15 +15,29 @@ namespace Library_Management.Controllers
         public IActionResult Create([FromBody] CreateBookRequestJson request)
         {
 
+            if (!TryParseGender(request.Gender, out BookGender parsedGender)) {
+
+                return BadRequest(new
+                {
+                    Message = "Gender is not valid.",
+                    validOptions = Enum.GetNames(typeof(BookGender))
+                });
+            }
+
             var response = new CreatedBookResponseJson
             {
                 Name = request.Name,
                 Author = request.Author,
-                Gender = request.Gender,
+                Gender = parsedGender,
             };
 
             return Created(string.Empty, response);
         }
 
+        private bool TryParseGender(string gender, out BookGender parsedGender)
+        {
+            return Enum.TryParse<BookGender>(gender, out parsedGender);
+        }
     }
+
 }

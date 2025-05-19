@@ -7,6 +7,6 @@ namespace Library_Management.Communication.Requests
 
         public string Name { get; set; } = string.Empty;
         public string Author { get; set; } = string.Empty;
-        public BookGender Gender { get; set; }
+        public string Gender { get; set; } = string.Empty;
     }
 }

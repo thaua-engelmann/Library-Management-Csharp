@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Library_Management.Api.Entities;
+using Library_Management.Api.Services;
+using Library_Management.Api.Services.Interfaces;
 using Library_Management.Communication.Responses;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +21,9 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 // Configure AutoMapper.
 builder.Services.AddAutoMapper(typeof(Program));
+
+// Add Singleton Services.
+builder.Services.AddSingleton<IBookService, BookService>();
 
 var app = builder.Build();
 

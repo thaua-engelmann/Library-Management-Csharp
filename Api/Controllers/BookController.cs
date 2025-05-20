@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library_Management.Api.Entities;
+using Library_Management.Api.Services.Interfaces;
 using Library_Management.Communication.Requests;
 using Library_Management.Communication.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +12,15 @@ namespace Library_Management.Controllers
     public class BookController : ControllerBase
     {
         private readonly IMapper _mapper;
+        private readonly IBookService _bookService;
 
-        public BookController(IMapper mapper)
+        public BookController(IMapper mapper, IBookService bookService)
         {
             _mapper = mapper;
+            _bookService = bookService;
         }
 
         private List<string> Errors = new List<string>();
-        private List<Book> Books = new List<Book>();
 
         bool isGenderInvalid = false;
 
@@ -60,7 +62,7 @@ namespace Library_Management.Controllers
             var book = _mapper.Map<Book>(request);
             book.Gender = parsedGender;
 
-            Books.Add(book);
+            _bookService.Add(book);
 
             var response = _mapper.Map<CreatedBookResponseJson>(book);
 
@@ -68,7 +70,11 @@ namespace Library_Management.Controllers
         }
 
         [HttpGet]
-
+        [ProducesResponseType(typeof(List<Book>), StatusCodes.Status200OK)]
+        public IActionResult GetAll()
+        {
+            return Ok(_bookService.GetAll());
+        }
 
         private bool TryParseGender(string gender, out BookGender parsedGender)
         {

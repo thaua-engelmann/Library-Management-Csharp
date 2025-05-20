@@ -18,5 +18,10 @@ namespace Library_Management.Api.Services
             _books.Add(book);
         }
 
+        public Book? Get(Guid id)
+        {
+            return _books.FirstOrDefault(book => book.Id == id);
+        }
+
     }
 }

@@ -76,6 +76,23 @@ namespace Library_Management.Controllers
             return Ok(_bookService.GetAll());
         }
 
+        [HttpGet]
+        [Route("{id}")]
+        [ProducesResponseType(typeof(Book), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        public IActionResult GetById([FromRoute] Guid id)
+        {
+
+            var book = _bookService.Get(id);
+
+            if (book == null)
+            {
+                return NotFound($"Book with ID <{id}> was not found.");
+            }
+
+            return Ok(book);
+        }
+
         private bool TryParseGender(string gender, out BookGender parsedGender)
         {
             return Enum.TryParse<BookGender>(gender, ignoreCase: true, out parsedGender);

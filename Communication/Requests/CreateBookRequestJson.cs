@@ -1,6 +1,4 @@
-﻿using Library_Management.Models;
-
-namespace Library_Management.Communication.Requests
+﻿namespace Library_Management.Communication.Requests
 {
     public class CreateBookRequestJson
     {

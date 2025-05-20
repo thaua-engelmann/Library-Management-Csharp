@@ -1,6 +1,6 @@
-﻿using Library_Management.Communication.Requests;
+﻿using Library_Management.Api.Entities;
+using Library_Management.Communication.Requests;
 using Library_Management.Communication.Responses;
-using Library_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management.Controllers
@@ -18,7 +18,8 @@ namespace Library_Management.Controllers
         public IActionResult Create([FromBody] CreateBookRequestJson request)
         {
 
-            if (!TryParseGender(request.Gender, out BookGender parsedGender)) {
+            if (!TryParseGender(request.Gender, out BookGender parsedGender))
+            {
 
                 Errors.Add("Gender is not valid.");
                 isGenderInvalid = true;

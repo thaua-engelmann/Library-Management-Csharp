@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Library_Management.Models
+namespace Library_Management.Api.Entities
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum BookGender

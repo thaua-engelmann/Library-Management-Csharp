@@ -1,4 +1,4 @@
-﻿using Library_Management.Models;
+﻿using Library_Management.Api.Entities;
 
 namespace Library_Management.Communication.Responses
 {

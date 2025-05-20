@@ -10,6 +10,9 @@ namespace Library_Management.Controllers
     public class BookController : ControllerBase
     {
 
+        List<string> Errors = new List<string>();
+        bool isGenderInvalid = false;
+
         [HttpPost]
         [ProducesResponseType(typeof(CreatedBookResponseJson), StatusCodes.Status201Created)]
         public IActionResult Create([FromBody] CreateBookRequestJson request)
@@ -17,18 +20,39 @@ namespace Library_Management.Controllers
 
             if (!TryParseGender(request.Gender, out BookGender parsedGender)) {
 
-                return BadRequest(new
+                Errors.Add("Gender is not valid.");
+                isGenderInvalid = true;
+            }
+
+            const decimal MINIMUM_PRICE = 0.99m;
+
+            if (request.Price < MINIMUM_PRICE)
+            {
+                Errors.Add("Price must be greater than or equal to $0,99.");
+            }
+
+            if (Errors.Any())
+            {
+
+                var errorResponse = new Dictionary<string, object>
                 {
-                    Message = "Gender is not valid.",
-                    validOptions = Enum.GetNames(typeof(BookGender))
-                });
+                    {"Errors", Errors }
+                };
+
+                if (isGenderInvalid)
+                {
+                    errorResponse.Add("GenderValidOptions", Enum.GetNames(typeof(BookGender)));
+                }
+
+                return BadRequest(errorResponse);
             }
 
             var response = new CreatedBookResponseJson
             {
                 Name = request.Name,
                 Author = request.Author,
-                Gender = parsedGender,
+                Price = request.Price,
+                Gender = parsedGender
             };
 
             return Created(string.Empty, response);

@@ -3,6 +3,7 @@ using Library_Management.Api.Entities;
 using Library_Management.Api.Services.Interfaces;
 using Library_Management.Communication.Requests;
 using Library_Management.Communication.Responses;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management.Controllers
@@ -89,6 +90,22 @@ namespace Library_Management.Controllers
             {
                 return NotFound($"Book with ID <{id}> was not found.");
             }
+
+            return Ok(book);
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public IActionResult Update([FromRoute] Guid id, UpdateBookRequestJson request)
+        {
+            var book = _bookService.Get(id);
+
+            if (book == null)
+            {
+                return NotFound($"Book with ID <{id}> was not found.");
+            }
+
+            _mapper.Map(request, book);
 
             return Ok(book);
         }

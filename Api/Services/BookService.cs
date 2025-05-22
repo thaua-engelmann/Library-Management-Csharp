@@ -23,5 +23,10 @@ namespace Library_Management.Api.Services
             return _books.FirstOrDefault(book => book.Id == id);
         }
 
+        public void Delete(Book book)
+        {
+            _books.Remove(book);
+        }
+
     }
 }

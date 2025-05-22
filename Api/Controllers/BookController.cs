@@ -77,7 +77,7 @@ namespace Library_Management.Controllers
 
             if (book == null)
             {
-                return NotFound($"Book with ID <{id}> was not found.");
+                return NotFoundBook(id);
             }
 
             if (IsAnyFieldInvalid(request.Gender, request.Price, out BookGender parsedGender))
@@ -88,6 +88,23 @@ namespace Library_Management.Controllers
             _mapper.Map(request, book);
 
             return Ok(book);
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public IActionResult Delete([FromRoute] Guid id)
+        {
+
+            var book = _bookService.Get(id);
+
+            if (book == null)
+            {
+                return NotFoundBook(id);
+            }
+
+            _bookService.Delete(book);
+
+            return Ok($"Book with id <{book.Id}> deleted successfully.");
         }
 
         private bool IsAnyFieldInvalid(string gender, decimal price, out BookGender parsedGender)
@@ -122,6 +139,11 @@ namespace Library_Management.Controllers
             }
 
             return BadRequest(errorResponse);
+        }
+
+        private IActionResult NotFoundBook(Guid id)
+        {
+            return NotFound($"Book with ID <{id}> was not found.");
         }
     }
 

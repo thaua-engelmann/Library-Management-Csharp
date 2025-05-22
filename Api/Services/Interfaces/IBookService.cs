@@ -7,5 +7,6 @@ namespace Library_Management.Api.Services.Interfaces
         List<Book> GetAll();
         Book? Get(Guid id);
         void Add(Book book);
+        void Delete(Book book);
     }
 }

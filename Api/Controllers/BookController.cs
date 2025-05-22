@@ -3,7 +3,6 @@ using Library_Management.Api.Entities;
 using Library_Management.Api.Services.Interfaces;
 using Library_Management.Communication.Requests;
 using Library_Management.Communication.Responses;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library_Management.Controllers
@@ -22,42 +21,18 @@ namespace Library_Management.Controllers
         }
 
         private List<string> Errors = new List<string>();
+        private readonly decimal _MINIMUM_PRICE = 0.99m;
 
-        bool isGenderInvalid = false;
+        bool IsGenderInvalid = false;
 
         [HttpPost]
         [ProducesResponseType(typeof(CreatedBookResponseJson), StatusCodes.Status201Created)]
         public IActionResult Create([FromBody] CreateBookRequestJson request)
         {
 
-            if (!TryParseGender(request.Gender, out BookGender parsedGender))
+            if (IsAnyFieldInvalid(request.Gender, request.Price, out BookGender parsedGender))
             {
-
-                Errors.Add("Gender is not valid.");
-                isGenderInvalid = true;
-            }
-
-            const decimal MINIMUM_PRICE = 0.99m;
-
-            if (request.Price < MINIMUM_PRICE)
-            {
-                Errors.Add("Price must be greater than or equal to $0,99.");
-            }
-
-            if (Errors.Any())
-            {
-
-                var errorResponse = new Dictionary<string, object>
-                {
-                    {"Errors", Errors }
-                };
-
-                if (isGenderInvalid)
-                {
-                    errorResponse.Add("GenderValidOptions", Enum.GetNames(typeof(BookGender)));
-                }
-
-                return BadRequest(errorResponse);
+                return CustomBadRequest();
             }
 
             var book = _mapper.Map<Book>(request);
@@ -105,14 +80,48 @@ namespace Library_Management.Controllers
                 return NotFound($"Book with ID <{id}> was not found.");
             }
 
+            if (IsAnyFieldInvalid(request.Gender, request.Price, out BookGender parsedGender))
+            {
+                return CustomBadRequest();
+            }
+
             _mapper.Map(request, book);
 
             return Ok(book);
         }
 
+        private bool IsAnyFieldInvalid(string gender, decimal price, out BookGender parsedGender)
+        {
+            if (!TryParseGender(gender, out parsedGender))
+            {
+                Errors.Add("Gender is invalid.");
+                IsGenderInvalid = true;
+            }
+
+            if (price < _MINIMUM_PRICE) {
+                Errors.Add("Price must be greater than or equal to $0,99");
+            }
+
+            return Errors.Any();
+        }
         private bool TryParseGender(string gender, out BookGender parsedGender)
         {
             return Enum.TryParse<BookGender>(gender, ignoreCase: true, out parsedGender);
+        }
+
+        private IActionResult CustomBadRequest()
+        {
+            var errorResponse = new Dictionary<string, object>
+            {
+                {"Errors", Errors }
+            };
+
+            if (IsGenderInvalid)
+            {
+                errorResponse.Add("ValidGenderOptions", Enum.GetNames(typeof(BookGender)));
+            }
+
+            return BadRequest(errorResponse);
         }
     }
 
